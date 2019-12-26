@@ -1,0 +1,62 @@
+.Search {
+    display: inline-block;
+    margin-left: 0;
+    text-align: center;
+}
+
+.Search#Box {
+    /* border-radius: 15px 0 0 15px; */
+    width: 300px;
+    height: 40px;
+}
+
+.Search#Btd {
+    /* border-radius: 0 15px 15px 0; */
+    width: 80px;
+    height: 40px;
+    background-color: lightseagreen;
+    color: white;
+    border: 0;
+}
+
+.Search#Btd:hover {
+    /* border-radius: 0 15px 15px 0; */
+    background-color: rgb(50, 214, 206);
+    color: white;
+}
+
+.Search#Btd:active {
+    /* border-radius: 0 15px 15px 0; */
+    background-color: rgb(25, 94, 90);
+    color: white;
+}
+
+#container {
+    margin: auto;
+    position: relative;
+    top: 280px;
+    height: 50px;
+    width: 380px;
+	text-align:center;
+}
+
+progress {
+    background-color: #d4d4d4;
+    color: rgb(81, 238, 238);
+    width: 380px;
+
+}
+
+::-webkit-progress-value {
+    background:lightseagreen;
+}
+
+::-ms-fill {
+    background:lightseagreen;
+}
+
+img {
+    height: 200px;
+    width: 380px;
+    margin-top: 20px;
+}
