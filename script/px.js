@@ -8,22 +8,8 @@ $("#Btd").click(function(){
 	if(!textId)
 		alert("请输入ID");
 	else{
-		msg("进行下载...")
-		$.ajax({
-			url: "https://www.nullcat.cn/api/pixiv/info?mode=anime&zid="+textId,
-			dataType: "json",
-			async: true,
-			type: "GET",
-			success: function(data){
-				if(data.status==200)
-					loader.handleAnime(data);
-				else if(data.status==404)
-					msg("不存在作品或含有不当内容.");
-			},
-			error:function(){
-				
-			}
-		});
+		msg("进行下载...");
+		loader.ajax(textId, "anime");
 	}
 });
 
@@ -33,6 +19,45 @@ loader.init=function(){
 		quality: 10,
 		debug: true,
 		workerScript: 'script/gif.worker.js'
+	});
+}
+
+loader.handleStatic=function(data){
+	if(data.status==404){
+		msg("不存在作品或有受众限制.");
+		return false;
+	}else if(data.status==200){
+		var collect=data.body;
+		for(var i=0;i<collect.length;i++){
+			var partImage=document.createElement('img');
+			partImage.src=collect[i].original;
+			res.append(partImage);
+		}
+		msg("#右键图片保存#");
+	}
+}
+
+loader.ajax=function(zid, mode){
+	
+	$.ajax({
+		url: "https://www.nullcat.cn/api/pixiv/info",
+		dataType: "json",
+		async: true,
+		type: "GET",
+		data: {'zid': zid, 'mode': mode },
+		success: function(data){
+			if(mode=="anime"){
+				if(data.status==404)
+					msg("寻找静态资源..."), loader.ajax(zid, "static");
+				else
+					loader.handleAnime(data);
+			}
+			else if(mode=="static")
+				loader.handleStatic(data);	
+		},
+		error:function(){
+			msg("请求远程资源失败");
+		}
 	});
 }
 
@@ -69,6 +94,7 @@ loader.handleAnime=function(data){
 			return loader.gif.render();
 		}catch(err){
 			msg("中断了？刷新页面试试");
+			return false;
 		}
 	});
 }
