@@ -9,7 +9,7 @@ $("#Btd").click(function(){
 		alert("请输入ID");
 	else{
 		msg("进行下载...");
-		loader.ajax(textId, "anime");
+		loader.ajax(textId[0], "anime");
 	}
 });
 
@@ -38,13 +38,12 @@ loader.handleStatic=function(data){
 }
 
 loader.ajax=function(zid, mode){
-	
 	$.ajax({
 		url: "https://www.nullcat.cn/api/pixiv/info",
 		dataType: "json",
 		async: true,
 		type: "GET",
-		data: {'zid': zid, 'mode': mode },
+		data: {'zid' : zid, 'mode': mode },
 		success: function(data){
 			if(mode=="anime"){
 				if(data.status==404)
