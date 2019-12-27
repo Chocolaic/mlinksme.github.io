@@ -28,8 +28,9 @@ loader.handleStatic=function(data){
 	var imgList=data.result.info;
 	progress.show();
 	for(var i=0;i<imgList.length;i++){
-		animatedImage = document.createElement('img');
-		animatedImage.src=imgList[i].urls.regular;
+		partImage = document.createElement('img');
+		partImage.src=imgList[i].urls.regular;
+		res.append(partImage);
 		progress.val((i+1)/imgList.length);
 	}
 	progress.hide();
