@@ -104,14 +104,8 @@ loader.handleAnime=function(data){
 		try{
 			return concatImage();
 		}catch(err){
-			if(retry<1){
-				loader.gif.abort();
-				loader.init();
-				return concatImage();
-			}else{
-				msg("中断了？刷新页面试试");
-				return false;
-			}
+			msg("中断了？刷新页面试试");
+			return false;
 		}
 	});
 }
