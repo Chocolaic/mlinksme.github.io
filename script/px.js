@@ -28,8 +28,9 @@ loader.handleStatic=function(data){
 	var imgList=data.result.info;
 	progress.show();
 	for(var i=0;i<imgList.length;i++){
+		var path=imgList[i].original.match(/img-original.+/);
 		partImage = document.createElement('img');
-		partImage.src=imgList[i].urls.regular;
+		partImage.src="https://www.nullcat.cn/api/pixiv/proxy?path="+path;
 		res.append(partImage);
 		progress.val((i+1)/imgList.length);
 	}
