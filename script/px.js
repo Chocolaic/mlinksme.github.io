@@ -14,6 +14,7 @@ $("#Btd").click(function(){
 });
 
 loader.init=function(){
+	progress.hide();
 	loader.gif=new GIF({
 		workers: 2,
 		quality: 10,
@@ -23,7 +24,15 @@ loader.init=function(){
 }
 
 loader.handleStatic=function(data){
-	
+	msg("努力下载中...");
+	var imgList=data.result.info;
+	progress.show();
+	for(var i=0;i<imgList.length;i++){
+		animatedImage = document.createElement('img');
+		animatedImage.src=info[i].urls.regular;
+		progress.val((i+1)/imgList.length);
+	}
+	msg("#右键图片下载#");
 }
 
 loader.ajax=function(zid){
@@ -43,9 +52,9 @@ loader.ajax=function(zid){
 			}else{
 				switch(data.message){
 					case 400:
-						msg("Id不正确.");
+						msg("Id不正确.");break;
 					case 404:
-						msg("作品不存在或受屏蔽限制.");
+						msg("作品不存在或受屏蔽限制.");break;
 				}
 			}
 		},
@@ -72,6 +81,7 @@ loader.handleAnime=function(data){
 			loader.gif.addFrame(frameImage, {delay: frames[i].delay });
 		}
 		msg("正在操作文件...");
+		progress.show();
 		loader.gif.on('progress', function(p){
 			progress.val(p);
 		});
@@ -79,10 +89,11 @@ loader.handleAnime=function(data){
 			console.log("finished");
 			animatedImage = document.createElement('img');
 			animatedImage.src=loader.buildDataURL(_data);
-			msg("#点击图片下载#");
+			msg("#右键图片下载#");
 			res.attr("href", URL.createObjectURL(blob));
 			res.append(animatedImage);
 			progress.val(0);
+			progress.hide();
 		});
 		loader.gif.abort();
 		try{
