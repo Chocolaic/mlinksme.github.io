@@ -29,7 +29,7 @@ loader.handleStatic=function(data){
 		progress.val((i+1)/imgList.length);
 	}
 	progress.hide();
-	msg("#右键图片下载#");
+	msg("#右键图片保存#");
 }
 
 loader.ajax=function(zid){
@@ -41,6 +41,7 @@ loader.ajax=function(zid){
 		data: {'zid' : zid },
 		success: function(data){
 			if(!data.error){
+				res.empty();
 				var type=data.result.illustType;
 				if(type==2)
 					loader.handleAnime(data);
@@ -94,7 +95,7 @@ loader.handleAnime=function(data){
 				console.log("finished");
 				animatedImage = document.createElement('img');
 				animatedImage.src=loader.buildDataURL(_data);
-				msg("#右键图片下载#");
+				msg("#右键图片保存#");
 				res.attr("href", URL.createObjectURL(blob));
 				res.append(animatedImage);
 				progress.val(0);
