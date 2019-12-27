@@ -29,9 +29,10 @@ loader.handleStatic=function(data){
 	progress.show();
 	for(var i=0;i<imgList.length;i++){
 		animatedImage = document.createElement('img');
-		animatedImage.src=info[i].urls.regular;
+		animatedImage.src=imgList[i].urls.regular;
 		progress.val((i+1)/imgList.length);
 	}
+	progress.hide();
 	msg("#右键图片下载#");
 }
 
