@@ -9,7 +9,7 @@ $("#Btd").click(function(){
 		alert("请输入ID");
 	else{
 		msg("进行下载...");
-		loader.ajax(textId[0], "anime");
+		loader.ajax(textId[0]);
 	}
 });
 
@@ -23,36 +23,31 @@ loader.init=function(){
 }
 
 loader.handleStatic=function(data){
-	if(data.status==404){
-		msg("不存在作品或有受众限制.");
-		return false;
-	}else if(data.status==200){
-		var collect=data.body;
-		for(var i=0;i<collect.length;i++){
-			var partImage=document.createElement('img');
-			partImage.src=collect[i].original;
-			res.append(partImage);
-		}
-		msg("#右键图片保存#");
-	}
+	
 }
 
-loader.ajax=function(zid, mode){
+loader.ajax=function(zid){
 	$.ajax({
 		url: "https://www.nullcat.cn/api/pixiv/info",
 		dataType: "json",
 		async: true,
 		type: "GET",
-		data: {'zid' : zid, 'mode': mode },
+		data: {'zid' : zid },
 		success: function(data){
-			if(mode=="anime"){
-				if(data.status==404)
-					msg("寻找静态资源..."), loader.ajax(zid, "static");
-				else
+			if(!data.error){
+				var type=data.result.illustType;
+				if(type==2)
 					loader.handleAnime(data);
+				else
+					loader.handleStatic(data);
+			}else{
+				switch(data.message){
+					case 400:
+						msg("Id不正确.");
+					case 404:
+						msg("作品不存在或受屏蔽限制.");
+				}
 			}
-			else if(mode=="static")
-				loader.handleStatic(data);	
 		},
 		error:function(){
 			msg("请求远程资源失败");
@@ -62,15 +57,16 @@ loader.ajax=function(zid, mode){
 
 loader.handleAnime=function(data){
 	msg("努力下载中...");
-	var param=data.result.body.originalSrc.match(/img-zip-ugoira.+/),
-		frames=data.result.body.frames;
+	var param=data.result.info.originalSrc.match(/img-zip-ugoira.+/),
+		frames=data.result.info.frames,
+		type=data.result.info.mime_type;
 	JSZipUtils.getBinaryContent("https://www.nullcat.cn/api/pixiv/proxy?path="+param, function(err, compress){
 		if(err)
 			return false;
 		var zip = new JSZip(compress);
 		for(var i=0;i<frames.length;i++){
 			console.log(frames[i].file);
-			var str = "data:image/jpg;base64,"+BufferToBase64(zip.file(frames[i].file).asArrayBuffer()),
+			var str = "data:"+type+";base64,"+BufferToBase64(zip.file(frames[i].file).asArrayBuffer()),
 				frameImage = new Image();
 			frameImage.src = str;
 			loader.gif.addFrame(frameImage, {delay: frames[i].delay });
@@ -79,10 +75,10 @@ loader.handleAnime=function(data){
 		loader.gif.on('progress', function(p){
 			progress.val(p);
 		});
-		loader.gif.on('finished', function(blob, data){
+		loader.gif.on('finished', function(blob, _data){
 			console.log("finished");
 			animatedImage = document.createElement('img');
-			animatedImage.src=loader.buildDataURL(data);
+			animatedImage.src=loader.buildDataURL(_data);
 			msg("#点击图片下载#");
 			res.attr("href", URL.createObjectURL(blob));
 			res.append(animatedImage);
