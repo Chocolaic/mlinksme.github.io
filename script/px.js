@@ -108,8 +108,10 @@ loader.handleAnime=function(data){
 				loader.gif.abort();
 				loader.init();
 				return concatImage();
-			}else
-				msg("中断了？刷新页面试试"), return false;
+			}else{
+				msg("中断了？刷新页面试试");
+				return false;
+			}
 		}
 	});
 }
