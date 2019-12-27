@@ -53,6 +53,8 @@ loader.ajax=function(zid){
 						msg("Id不正确.");break;
 					case 404:
 						msg("作品不存在或受屏蔽限制.");break;
+					default:
+						msg(data.message);break;
 				}
 			}
 		},
