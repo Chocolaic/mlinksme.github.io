@@ -40,11 +40,17 @@
 	text-align:center;
 }
 
+footer {
+	position: absolute;
+	bottom: 0;
+	width: 90%;
+	text-align:center;
+}
+
 progress {
     background-color: #d4d4d4;
     color: rgb(81, 238, 238);
     width: 380px;
-
 }
 
 ::-webkit-progress-value {
