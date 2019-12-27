@@ -15,12 +15,6 @@ $("#Btd").click(function(){
 
 loader.init=function(){
 	progress.hide();
-	loader.gif=new GIF({
-		workers: 2,
-		quality: 10,
-		debug: true,
-		workerScript: 'script/gif.worker.js'
-	});
 }
 
 loader.handleStatic=function(data){
@@ -77,6 +71,12 @@ loader.handleAnime=function(data){
 			return false;
 		var zip = new JSZip(compress), retry=0;
 		function concatImage(){
+			loader.gif=new GIF({
+				workers: 2,
+				quality: 10,
+				debug: true,
+				workerScript: 'script/gif.worker.js'
+			});
 			for(var i=0;i<frames.length;i++){
 				console.log(frames[i].file);
 				var str = "data:"+type+";base64,"+BufferToBase64(zip.file(frames[i].file).asArrayBuffer()),
@@ -84,6 +84,7 @@ loader.handleAnime=function(data){
 				frameImage.src = str;
 				loader.gif.addFrame(frameImage, {delay: frames[i].delay });
 			}
+			loader.gif.abort();
 			msg("正在操作文件...");
 			progress.show();
 			loader.gif.on('progress', function(p){
