@@ -75,35 +75,41 @@ loader.handleAnime=function(data){
 	JSZipUtils.getBinaryContent("https://www.nullcat.cn/api/pixiv/proxy?path="+param, function(err, compress){
 		if(err)
 			return false;
-		var zip = new JSZip(compress);
-		for(var i=0;i<frames.length;i++){
-			console.log(frames[i].file);
-			var str = "data:"+type+";base64,"+BufferToBase64(zip.file(frames[i].file).asArrayBuffer()),
-				frameImage = new Image();
-			frameImage.src = str;
-			loader.gif.addFrame(frameImage, {delay: frames[i].delay });
-		}
-		msg("正在操作文件...");
-		progress.show();
-		loader.gif.on('progress', function(p){
-			progress.val(p);
-		});
-		loader.gif.on('finished', function(blob, _data){
-			console.log("finished");
-			animatedImage = document.createElement('img');
-			animatedImage.src=loader.buildDataURL(_data);
-			msg("#右键图片下载#");
-			res.attr("href", URL.createObjectURL(blob));
-			res.append(animatedImage);
-			progress.val(0);
-			progress.hide();
-		});
-		loader.gif.abort();
-		try{
+		var zip = new JSZip(compress), retry=0;
+		function concatImage(){
+			for(var i=0;i<frames.length;i++){
+				console.log(frames[i].file);
+				var str = "data:"+type+";base64,"+BufferToBase64(zip.file(frames[i].file).asArrayBuffer()),
+					frameImage = new Image();
+				frameImage.src = str;
+				loader.gif.addFrame(frameImage, {delay: frames[i].delay });
+			}
+			msg("正在操作文件...");
+			progress.show();
+			loader.gif.on('progress', function(p){
+				progress.val(p);
+			});
+			loader.gif.on('finished', function(blob, _data){
+				console.log("finished");
+				animatedImage = document.createElement('img');
+				animatedImage.src=loader.buildDataURL(_data);
+				msg("#右键图片下载#");
+				res.attr("href", URL.createObjectURL(blob));
+				res.append(animatedImage);
+				progress.val(0);
+				progress.hide();
+			});
 			return loader.gif.render();
+		}
+		try{
+			return concatImage();
 		}catch(err){
-			msg("中断了？刷新页面试试");
-			return false;
+			if(retry<1){
+				loader.gif.abort();
+				loader.init();
+				return concatImage();
+			}else
+				msg("中断了？刷新页面试试"), return false;
 		}
 	});
 }
