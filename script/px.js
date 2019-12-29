@@ -1,12 +1,15 @@
 var loader={};
 var label=$("label"), 
 	res=$("#resource"),
-	progress=$("progress");
+	progress=$("progress"),
+	onhandle=false;
 
 $("#Btd").click(function(){
 	var textId=$("#Box").val().match(/\d+/);
 	if(!textId)
 		alert("请输入ID");
+	else if(onhandle)
+		alert("请耐心等待操作完成..");
 	else{
 		msg("进行下载...");
 		loader.ajax(textId[0]);
@@ -30,9 +33,11 @@ loader.handleStatic=function(data){
 	}
 	progress.hide();
 	msg("#右键图片保存#");
+	onhandle=false;
 }
 
 loader.ajax=function(zid){
+	onhandle=true;
 	$.ajax({
 		url: "https://nullcat.cn/api/pixiv/info",
 		dataType: "json",
@@ -60,6 +65,7 @@ loader.ajax=function(zid){
 		},
 		error:function(){
 			msg("请求远程资源失败");
+			onhandle=false;
 		}
 	});
 }
@@ -90,7 +96,6 @@ loader.handleAnime=function(data){
 				frameImage.src = str;
 				gif.addFrame(frameImage, {delay: frames[i].delay });
 			}
-			gif.abort();
 			msg("正在操作文件...");
 			progress.show();
 			gif.on('progress', function(p){
@@ -113,6 +118,8 @@ loader.handleAnime=function(data){
 		}catch(err){
 			msg("中断了？刷新页面试试");
 			return false;
+		}finally{
+			onhandle=false;
 		}
 	});
 }
