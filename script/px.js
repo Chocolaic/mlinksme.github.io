@@ -34,7 +34,7 @@ loader.handleStatic=function(data){
 
 loader.ajax=function(zid){
 	$.ajax({
-		url: "https://www.nullcat.cn/api/pixiv/info",
+		url: "https://nullcat.cn/api/pixiv/info",
 		dataType: "json",
 		async: true,
 		type: "GET",
@@ -73,9 +73,9 @@ loader.handleAnime=function(data){
 	JSZipUtils.getBinaryContent("https://nullcat.cn/api/pixiv/proxy?path="+param, function(err, compress){
 		if(err)
 			return false;
-		var zip = new JSZip(compress), retry=0;
+		var zip = new JSZip(compress);
 		function concatImage(){
-			loader.gif=new GIF({
+			var gif=new GIF({
 				workers: 2,
 				quality: 10,
 				width: size[0],
@@ -88,15 +88,15 @@ loader.handleAnime=function(data){
 				var str = "data:"+type+";base64,"+BufferToBase64(zip.file(frames[i].file).asArrayBuffer()),
 					frameImage = new Image();
 				frameImage.src = str;
-				loader.gif.addFrame(frameImage, {delay: frames[i].delay });
+				gif.addFrame(frameImage, {delay: frames[i].delay });
 			}
-			loader.gif.abort();
+			gif.abort();
 			msg("正在操作文件...");
 			progress.show();
-			loader.gif.on('progress', function(p){
+			gif.on('progress', function(p){
 				progress.val(p);
 			});
-			loader.gif.on('finished', function(blob, _data){
+			gif.on('finished', function(blob, _data){
 				console.log("finished");
 				animatedImage = document.createElement('img');
 				animatedImage.src=loader.buildDataURL(_data);
@@ -106,7 +106,7 @@ loader.handleAnime=function(data){
 				progress.val(0);
 				progress.hide();
 			});
-			return loader.gif.render();
+			return gif.render();
 		}
 		try{
 			return concatImage();
