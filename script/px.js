@@ -24,7 +24,7 @@ loader.handleStatic=function(data){
 	for(var i=0;i<imgList.length;i++){
 		var path=imgList[i].urls.original.match(/img-original.+/);
 		partImage = document.createElement('img');
-		partImage.src="https://www.nullcat.cn/api/pixiv/proxy?path="+path;
+		partImage.src="https://nullcat.cn/api/pixiv/proxy?path="+path;
 		res.append(partImage);
 		progress.val((i+1)/imgList.length);
 	}
@@ -68,8 +68,9 @@ loader.handleAnime=function(data){
 	msg("努力下载中...");
 	var param=data.result.info.originalSrc.match(/img-zip-ugoira.+/),
 		frames=data.result.info.frames,
-		type=data.result.info.mime_type;
-	JSZipUtils.getBinaryContent("https://www.nullcat.cn/api/pixiv/proxy?path="+param, function(err, compress){
+		type=data.result.info.mime_type,
+		size= data.result.info.Resolution;
+	JSZipUtils.getBinaryContent("https://nullcat.cn/api/pixiv/proxy?path="+param, function(err, compress){
 		if(err)
 			return false;
 		var zip = new JSZip(compress), retry=0;
@@ -77,6 +78,8 @@ loader.handleAnime=function(data){
 			loader.gif=new GIF({
 				workers: 2,
 				quality: 10,
+				width: size[0],
+				height: size[1],
 				debug: true,
 				workerScript: 'script/gif.worker.js'
 			});
