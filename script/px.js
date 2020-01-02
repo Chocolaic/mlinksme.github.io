@@ -22,10 +22,10 @@ loader.init=function(){
 
 loader.handleStatic=function(data){
 	msg("努力下载中...");
-	var imgList=data.result.info;
+	var imgList=data.result.info.urls;
 	progress.show();
 	for(var i=0;i<imgList.length;i++){
-		var path=imgList[i].urls.original.match(/img-original.+/);
+		var path=imgList[i].original.match(/img-original.+/);
 		partImage = document.createElement('img');
 		partImage.src="https://nullcat.cn/api/pixiv/proxy?path="+path;
 		res.append(partImage);
@@ -61,6 +61,7 @@ loader.ajax=function(zid){
 					default:
 						msg(data.message);break;
 				}
+				onhandle=false;
 			}
 		},
 		error:function(){
