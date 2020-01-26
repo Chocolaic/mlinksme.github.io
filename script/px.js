@@ -18,6 +18,11 @@ $("#Btd").click(function(){
 
 loader.init=function(){
 	progress.hide();
+	var urlId=window.location.href.match(/\d+/);
+	if(urlId){
+		msg("进行下载...");
+		loader.ajax(urlId);
+	}
 }
 
 loader.handleStatic=function(data){
@@ -27,7 +32,7 @@ loader.handleStatic=function(data){
 	for(var i=0;i<imgList.length;i++){
 		var path=imgList[i].original.match(/img-original.+/);
 		partImage = document.createElement('img');
-		partImage.src="https://nullcat.cn/api/pixiv/proxy?path="+path;
+		partImage.src="https://www.nullcat.cn/api/pixiv/proxy?path="+path;
 		res.append(partImage);
 		progress.val((i+1)/imgList.length);
 	}
@@ -39,7 +44,7 @@ loader.handleStatic=function(data){
 loader.ajax=function(zid){
 	onhandle=true;
 	$.ajax({
-		url: "https://nullcat.cn/api/pixiv/info",
+		url: "https://www.nullcat.cn/api/pixiv/info",
 		dataType: "json",
 		async: true,
 		type: "GET",
@@ -77,7 +82,7 @@ loader.handleAnime=function(data){
 		frames=data.result.info.frames,
 		type=data.result.info.mime_type,
 		size= data.result.info.Resolution;
-	JSZipUtils.getBinaryContent("https://nullcat.cn/api/pixiv/proxy?path="+param, function(err, compress){
+	JSZipUtils.getBinaryContent("https://www.nullcat.cn/api/pixiv/proxy?path="+param, function(err, compress){
 		if(err)
 			return false;
 		var zip = new JSZip(compress);
